@@ -1,5 +1,4 @@
 from copy import deepcopy
-# Tic Tac Toe board class
 from game.game_handler import MCTS
 
 
@@ -9,10 +8,9 @@ class Board():
         # define players
         self.player_1 = 'x'
         self.player_2 = 'o'
-        self.empty_square = '.'
         self.height = 3
         self.width = 3
-        self.mcts = None
+        self.empty_square = '.'
 
         # define board position
         self.position = {}
@@ -32,9 +30,6 @@ class Board():
             for col in range(3):
                 # set every board square to empty square
                 self.position[row, col] = self.empty_square
-
-    def getBoard(self):
-        return self.position
 
     # make move
     def make_move(self, row, col):
@@ -171,26 +166,24 @@ class Board():
         return actions
 
     # main game loop
-    def play_next_turn(self, position):
-        if self.mcts is None:
-            self.mcts = MCTS()
+    def game_turn_player(self,pos):
+        return self.make_move(*pos)
 
-        print("le joueur joue")
-
-        return self.make_move(*position)
-
-        print("le joueur a joué")
-
-    def play_ai_next_turn(self):
-
-        best_move = self.mcts.search(self)
-        print("yoooo")
-
+    def game_turn_IA(self, mcts):
         try:
-            return best_move.board
+            best_move = mcts.search(self)
+            self = best_move.board
         except:
-            return None
+            pass
 
+        if self.is_win():
+            print("AI won the game")
+
+        # check if the game is drawn
+        elif self.is_draw():
+            print('Game is drawn!\n')
+
+        return self
 
 
 

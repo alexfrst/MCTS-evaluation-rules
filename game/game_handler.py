@@ -1,5 +1,6 @@
-import math
 import random
+from game.rules_selection import IMED_selection, UCB_selection, klGauss
+
 
 # tree node class definition
 class TreeNode():
@@ -27,16 +28,19 @@ class TreeNode():
         self.children = {}
 
 # MCTS class definition
+
+
 class MCTS():
     # search for the best move in the current position
-    def search(self, initial_state):
+    def search(self, initial_state, rule_selection):
         # create root node
         self.root = TreeNode(initial_state, None)
 
         # walk through 1000 iterations
         for iteration in range(1000):
             # select a node (selection phase)
-            node = self.select(self.root)
+            node = self.select(self.root, rule_selection,
+                               exploration_constant=2)
 
             # scrore current node (simulation phase)
             score = self.rollout(node.board)
@@ -46,20 +50,21 @@ class MCTS():
 
         # pick up the best move in the current position
         try:
-            return self.get_best_move(self.root, 0)
+            return self.get_best_move(self.root, rule_selection, exploration_constant=2)
 
         except:
             pass
 
     # select most promising node
-    def select(self, node):
+    def select(self, node, rule_selection, exploration_constant=2):
         # make sure that we're dealing with non-terminal nodes
         while not node.is_terminal:
             # case where the node is fully expanded
             if node.is_fully_expanded:
-                node = self.get_best_move(node, 2)
+                node = self.get_best_move(
+                    node, rule_selection, exploration_constant, klGauss)
 
-            # case where the node is not fully expanded 
+            # case where the node is not fully expanded
             else:
                 # otherwise expand the node
                 return self.expand(node)
@@ -107,8 +112,10 @@ class MCTS():
                 return 0
 
         # return score from the player "x" perspective
-        if board.player_2 == 'x': return 1
-        elif board.player_2 == 'o': return -1
+        if board.player_2 == 'x':
+            return 1
+        elif board.player_2 == 'o':
+            return -1
 
     # backpropagate the number of visits and score up to the root node
     def backpropagate(self, node, score):
@@ -123,29 +130,12 @@ class MCTS():
             # set node to parent
             node = node.parent
 
-    # select the best node basing on UCB1 formula
-    def get_best_move(self, node, exploration_constant):
-        # define best score & best moves
-        best_score = float('-inf')
-        best_moves = []
+    # select the best node
+    def get_best_move(self, node, rule_selection, exploration_constant, kullback=klGauss):
+        if rule_selection == 'UCB':
+            next_move = UCB_selection(node, exploration_constant)
 
-        # loop over child nodes
-        for child_node in node.children.values():
-            # define current player
-            if child_node.board.player_2 == 'x': current_player = 1
-            elif child_node.board.player_2 == 'o': current_player = -1
+        elif rule_selection == 'IMED':
+            next_move = IMED_selection(node, kullback)
 
-            # get move score using UCT formula
-            move_score = current_player * child_node.score / child_node.visits + exploration_constant * math.sqrt(math.log(node.visits / child_node.visits))
-
-            # better move has been found
-            if move_score > best_score:
-                best_score = move_score
-                best_moves = [child_node]
-
-            # found as good move as already available
-            elif move_score == best_score:
-                best_moves.append(child_node)
-
-        # return one of the best moves randomly
-        return random.choice(best_moves)
+        return(next_move)

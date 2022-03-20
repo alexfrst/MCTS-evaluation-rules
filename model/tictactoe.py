@@ -4,13 +4,14 @@ from game.game_handler import MCTS
 
 class Board():
     # create constructor (init board class instance)
-    def __init__(self, board=None):
+    def __init__(self, board=None, rule_selection='UCB'):
         # define players
         self.player_1 = 'x'
         self.player_2 = 'o'
         self.height = 3
         self.width = 3
         self.empty_square = '.'
+        self.rule_selection = rule_selection
 
         # define board position
         self.position = {}
@@ -166,12 +167,12 @@ class Board():
         return actions
 
     # main game loop
-    def game_turn_player(self,pos):
+    def game_turn_player(self, pos):
         return self.make_move(*pos)
 
     def game_turn_IA(self, mcts):
         try:
-            best_move = mcts.search(self)
+            best_move = mcts.search(self, self.rule_selection)
             self = best_move.board
         except:
             pass
@@ -184,7 +185,6 @@ class Board():
             print('Game is drawn!\n')
 
         return self
-
 
 
 # def game_loop(self):
@@ -279,7 +279,6 @@ class Board():
     #
     #     # return board string
     #     return board_string
-
 
 # create board instance
 board = Board()

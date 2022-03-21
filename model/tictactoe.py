@@ -2,7 +2,7 @@ from copy import deepcopy
 from game.game_handler import MCTS
 
 
-class Board():
+class TicTactToeBoard():
     # create constructor (init board class instance)
     def __init__(self, board=None, rule_selection='UCB'):
         # define players

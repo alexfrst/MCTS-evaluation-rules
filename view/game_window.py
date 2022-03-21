@@ -7,7 +7,7 @@ from model.tictactoe import TicTacToeBoard
 
 
 class GameWindow(Tk):
-    def __init__(self, model: Board):
+    def __init__(self, model):
         super().__init__()
         self.title("MCTS Project")
         """

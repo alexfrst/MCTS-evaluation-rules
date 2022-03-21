@@ -1,6 +1,4 @@
-from view.game_window import GameWindow
 from view.start_window import StartWindow
-from model.tictactoe import Board
 
 """
 rule_selection = 'UCB'

@@ -2,7 +2,7 @@ from tkinter import Tk, Label
 import tkinter.font as tkFont
 from game.game_handler import MCTS
 from view.grid import GameGrid
-from model.tictactoe import TicTactToeBoard
+from model.tictactoe import TicTacToeBoard
 #from model.tictactoe import MCTS
 
 

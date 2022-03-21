@@ -1,4 +1,4 @@
-from tkinter import Button, Frame, DISABLED
+from tkinter import Button, Frame, DISABLED, NORMAL
 from functools import partial
 
 default_button_style = {
@@ -31,18 +31,38 @@ class GameGrid:
         self.cases[i][j]["state"] = DISABLED
         self.cases[i][j]["bg"] = "#898989"
 
+    def enable_button(self, button):
+        i,j = button
+        self.cases[i][j]["state"] = NORMAL
+        self.cases[i][j]["bg"] = "#898989"
+
     def update_button_content(self, button , color, label):
         i,j = button
         self.cases[i][j]["text"] = label
         self.cases[i][j]["bg"] = color
 
     def render(self,positions):
-        for pos in positions:
-            if positions[pos] == "x":
-                self.update_button_content(pos ,"#FF0000", "X")
-                self.disable_button(pos)
-            if positions[pos] == "o":
-                self.update_button_content(pos ,"#0000FF", "O")
-                self.disable_button(pos)
+        if isinstance(positions, dict):
+            for pos in positions:
+                if positions[pos] == "x":
+                    self.update_button_content(pos ,"#FF0000", "X")
+                    self.disable_button(pos)
+                if positions[pos] == "o":
+                    self.update_button_content(pos ,"#0000FF", "O")
+                    self.disable_button(pos)
+        else:
+            for row in range(len(positions)):
+                for col in range(len(positions[0])):
+                    pos = row,col
+                    if positions[pos] == 0:
+                        self.enable_button(pos)
+                    if positions[pos] == 1:
+                        self.update_button_content(pos, "#555555", "X")
+                        self.disable_button(pos)
+                    if positions[pos] == 2:
+                        self.update_button_content(pos, "#FFFFFF", "O")
+                        self.disable_button(pos)
+
+
 
 

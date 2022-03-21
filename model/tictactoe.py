@@ -23,6 +23,9 @@ class TicTacToeBoard():
         if board is not None:
             self.__dict__ = deepcopy(board.__dict__)
 
+    def render(self):
+        return self.position
+
     # init (reset) board
     def init_board(self):
         # loop over board rows
@@ -35,7 +38,7 @@ class TicTacToeBoard():
     # make move
     def make_move(self, row, col):
         # create new board instance that inherits from the current state
-        board = Board(self)
+        board = TicTacToeBoard(self)
 
         # make move
         board.position[row, col] = self.player_1
@@ -281,4 +284,3 @@ class TicTacToeBoard():
     #     return board_string
 
 # create board instance
-board = Board()

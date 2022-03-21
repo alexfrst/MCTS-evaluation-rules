@@ -36,10 +36,10 @@ class GameWindow(Tk):
 
     def play(self, pos):
         self.model = self.model.game_turn_player(pos)
-        self.grid.render(self.model.position)
+        self.grid.render(self.model.render())
         self.update()
         self.model = self.model.game_turn_IA(self.mcts)
-        self.grid.render(self.model.position)
+        self.grid.render(self.model.render())
         self.update()
 
 

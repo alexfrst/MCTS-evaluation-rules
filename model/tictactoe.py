@@ -8,8 +8,8 @@ class Board():
         # define players
         self.player_1 = 'x'
         self.player_2 = 'o'
-        self.height = 3
-        self.width = 3
+        self.height = 5
+        self.width = 5
         self.empty_square = '.'
         self.rule_selection = rule_selection
 

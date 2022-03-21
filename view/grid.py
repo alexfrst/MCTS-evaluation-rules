@@ -3,7 +3,10 @@ from functools import partial
 
 default_button_style = {
     "bg": "#595959", "fg": "white", "highlightthickness": 0,
-    "font": ("Arial", 25, "bold")
+    "font": ("Arial", 25, "bold"),
+    "borderwidth":10,
+    "width": 5,
+    "height": 2
 }
 grid_dict = {"sticky": "nswe", "padx": 10, "pady": 10}
 
@@ -13,7 +16,7 @@ class GameGrid:
         # On appelle le constructeur parent
         super().__init__()
         self.gridFrame = Frame(window)
-        self.gridFrame.grid(column=0, row=0, sticky="nswe")
+        self.gridFrame.grid(column=0, row=2)#, sticky="nswe")
         self.cases = []
 
         for i in range(height):
@@ -28,8 +31,7 @@ class GameGrid:
         self.cases[i][j]["state"] = DISABLED
         self.cases[i][j]["bg"] = "#898989"
 
-
-    def update_button_content(self,button ,color, label):
+    def update_button_content(self, button , color, label):
         i,j = button
         self.cases[i][j]["text"] = label
         self.cases[i][j]["bg"] = color

@@ -4,14 +4,16 @@ from game.game_handler import MCTS
 
 class TicTacToeBoard():
     # create constructor (init board class instance)
-    def __init__(self, board=None, rule_selection='UCB'):
+    #def __init__(self, board=None, rule_selection='UCB', size=3):
+    def __init__(self, board=None, size=3, rule_selection1 = 'UCB', rule_selection2 = 'IMED'):
         # define players
         self.player_1 = 'x'
         self.player_2 = 'o'
-        self.height = 5
-        self.width = 5
+        self.height = size
+        self.width = size
         self.empty_square = '.'
-        self.rule_selection = rule_selection
+        self.rule_selection = rule_selection1
+        self.rule_selection2 = rule_selection2
 
         # define board position
         self.position = {}
@@ -35,7 +37,7 @@ class TicTacToeBoard():
     # make move
     def make_move(self, row, col):
         # create new board instance that inherits from the current state
-        board = Board(self)
+        board = TicTacToeBoard(self)
 
         # make move
         board.position[row, col] = self.player_1
@@ -170,11 +172,12 @@ class TicTacToeBoard():
     def game_turn_player(self, pos):
         return self.make_move(*pos)
 
-    def game_turn_IA(self, mcts):
+    def game_turn_IA(self, mcts, rule_selection):
         try:
-            best_move = mcts.search(self, self.rule_selection)
+            best_move = mcts.search(self, rule_selection)
             self = best_move.board
         except:
+            print("Dans le except")
             pass
 
         if self.is_win():
@@ -281,4 +284,4 @@ class TicTacToeBoard():
     #     return board_string
 
 # create board instance
-board = Board()
+board = TicTacToeBoard()

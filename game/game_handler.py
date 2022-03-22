@@ -23,6 +23,8 @@ class TreeNode():
 class MCTS():
     # search for the best move in the current position
     def search(self, initial_state, rule_selection):
+
+        # create root node
         self.root = TreeNode(initial_state, None)
         print(initial_state.board)
 

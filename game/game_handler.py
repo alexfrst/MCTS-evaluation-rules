@@ -1,5 +1,5 @@
 import random
-from game.rules_selection import IMED_selection, UCB_selection, klGauss
+from game.rules_selection import IMED_selection, UCB_selection, klBern, random_selection
 
 
 # tree node class definition
@@ -62,7 +62,7 @@ class MCTS():
             # case where the node is fully expanded
             if node.is_fully_expanded:
                 node = self.get_best_move(
-                    node, rule_selection, exploration_constant, klGauss)
+                    node, rule_selection, exploration_constant, klBern)
 
             # case where the node is not fully expanded
             else:
@@ -131,11 +131,14 @@ class MCTS():
             node = node.parent
 
     # select the best node
-    def get_best_move(self, node, rule_selection, exploration_constant, kullback=klGauss):
+    def get_best_move(self, node, rule_selection, exploration_constant, kullback=klBern):
         if rule_selection == 'UCB':
             next_move = UCB_selection(node, exploration_constant)
 
         elif rule_selection == 'IMED':
             next_move = IMED_selection(node, kullback)
+
+        elif rule_selection == 'random':
+            next_move = random_selection(node)
 
         return(next_move)

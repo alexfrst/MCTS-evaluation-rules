@@ -2,7 +2,6 @@ from tkinter import Tk
 from game.game_handler import MCTS
 from view.grid import GameGrid
 from model.tictactoe import Board
-#from model.tictactoe import MCTS
 
 
 class GameWindow(Tk):

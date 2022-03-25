@@ -48,17 +48,23 @@ def IMED_selection(node, kullback):
     best_moves = []
     means = []
     for child_node in node.children.values():
-        # define current player
-        if child_node.board.player_2 == 'x':
-            current_player = 1
-        elif child_node.board.player_2 == 'o':
-            current_player = -1
+        # # define current player
+        # if child_node.board.player_2 == 'x':
+        #     current_player = 1
+        # elif child_node.board.player_2 == 'o':
+        #     current_player = -1
 
-        means.append((current_player*child_node.score)/child_node.visits)
+        # means.append((current_player*child_node.score)/child_node.visits)
+        # maxMeans = max(means)
+
+        # move_score = child_node.visits * kullback((current_player*child_node.score)/child_node.visits, maxMeans) + math.log(
+        #     child_node.visits) if child_node.visits > 0 else -1
+
+        means.append((child_node.score)/child_node.visits)
         maxMeans = max(means)
 
-        move_score = child_node.visits * kullback((current_player*child_node.score)/child_node.visits, maxMeans) + math.log(
-            child_node.visits) if child_node.visits > 0 else 0  # ou -np.Inf ?
+        move_score = child_node.visits * kullback((child_node.score)/child_node.visits, maxMeans) + math.log(
+            child_node.visits) if child_node.visits > 0 else -1
 
         # better move has been found
         if move_score < best_score:

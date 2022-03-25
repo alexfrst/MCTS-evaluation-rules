@@ -9,16 +9,17 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 import numpy as np
 import random
-import operator
+#import operator
 
-# Fonciton de test pour faire des plot et des stats
-# A remplacer par un fonciton qui fait s'affronter deux agents entre eux
-# défninie par agent_vs_agent(game,agent_to_test, agent_to_compare, begin)
-# Entry
+# agent_vs_agent_test : Fonction de test
+
+# A remplacer par la fonciton qui fait s'affronter deux agents entre eux
+# agent_vs_agent(game,agent_to_test, agent_to_compare, begin) :
+# En paramètres :
 # agent_to_test: Agent class (Specific rule selction agent)
 # agent_to_compare: Agent class (Dummy Agent)
-# begin : bool If True, agent_to_test starts, if False agent_to_test doesn't start
-# Returns
+# begin : bool. If True, agent_to_test starts, if False agent_to_test doesn't start
+# Returns :
 # 1, 0,-1 if agent_to_test wins, draw, lose
 
 
@@ -81,29 +82,37 @@ def performance_agent(game, agent_to_test, agent_to_compare, nb_simulations, beg
                 pbar.set_postfix(postfix)
                 pbar.update(throttle)
 
-    if plot:
-        plotstats(stats)
+
 
     win_rate = nb_win/nb_simulations
+    win_rate_int = int(round(win_rate, 2)*100)
     ecart_type = 1/np.sqrt(nb_simulations)
     interval = [win_rate - ecart_type, win_rate + ecart_type]
+    # TODO : formule de l'intervale à 95%
+    #interval_95 = [win_rate - 2*ecart_type, win_rate + 2*ecart_type]
+    
+    if plot:
+        plotstats(stats, win_rate_int)
     return(interval)
 
 
-def plotstats(stats):
+def plotstats(stats,win_rate):
     draws = stats == 0
     agent_wins = stats == 1
 
-    fig, ax = plt.subplots(nrows=1, ncols=1)
+    _, ax = plt.subplots(nrows=1, ncols=1)
     ax.plot(np.cumsum(agent_wins) / np.cumsum(np.ones(len(stats))),
             color='green', label='wins')
     ax.plot(np.cumsum(draws) / np.cumsum(np.ones(len(stats))),
-            color='blue', label='draw')
+            color='blue', label='draws')
     ax.yaxis.set_major_formatter(
         FuncFormatter(lambda y, _: '{:.0%}'.format(y)))
 
     ax.set_xlabel('')
     ax.legend(loc='upper left')
+    
+    plt.text(0.5,0.5,f'win rate {win_rate} %',horizontalalignment='left',
+     verticalalignment='center', transform = ax.transAxes, fontsize=14, color='r')
 
     plt.tight_layout()
     plt.show()
@@ -138,7 +147,7 @@ def compare_agents(game, agents_to_test, agent_to_compare, nb_simulations, begin
                                                      agent_to_test, agent_to_compare, nb_simulations, begin, plot)
         win_rate = (intervals[agent_to_test][0] +
                     intervals[agent_to_test][1])/2
-        win_rates[agent_to_test] = round(win_rate, 2)*100
+        win_rates[agent_to_test] = int(round(win_rate, 2)*100)
 
     print(f'The win_rates (%) of each agent are : {win_rates}')
 
@@ -148,20 +157,20 @@ def compare_agents(game, agents_to_test, agent_to_compare, nb_simulations, begin
 
     elif intervals[0][1][1] <= intervals[1][1][1]:  # b1 < b2 intervalles se recoupent
         intersection = abs(intervals[1][1][0] - intervals[0][1][1])
-        intersection = round(intersection, 2)*100  # b1 - a2
+        intersection = int(round(intersection, 2)*100)  # b1 - a2
         print(
-            f'Best agent seems to be {intervals[1][0]} but ... of {intersection} %')
+            f'Cannot conclude : there is a probability of {intersection} % that agents have the same performance.')  # However, agent with highest winning rate is {intervals[1][0]}')
 
     # a1<a2 et b2<b1 intervalles incluent l'un dans l'autre
     elif (intervals[0][1][0] < intervals[1][1][0]) & (intervals[1][1][1] < intervals[0][1][1]):
         print(
-            f'Agents have very close winning rate. Agent with highest winngin rate is {max(win_rates.iteritems(), key=operator.itemgetter(1))[0]}')
+            f'Cannot conclude : agents have very close winning rate.')  # Agent with highest winngin rate is {max(win_rates.iteritems(), key=operator.itemgetter(1))[0]}')
 
     elif (intervals[0][1][0] == intervals[1][1][0]) & (intervals[0][1][1] == intervals[1][1][1]):
-        print('Agents have exactly same performances')
+        print('Agents have exactly same performance')
 
     else:
-        print('Not supposed to be there')
+        print('Debug : Not supposed to be there')
 
 
 if __name__ == '__main__':
@@ -170,3 +179,5 @@ if __name__ == '__main__':
     game = 'tictactoe'
     compare_agents(game, agents_to_test, agent_to_compare,
                    nb_simulations=2000, begin=True, plot=True)
+
+

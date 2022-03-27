@@ -52,7 +52,7 @@ class GameWindow(Toplevel):
             if self.rule_selection2 != "Human":
                 print("------IA vs IA------")
                 turn = 0
-                while not self.model.is_win() or not self.model.is_draw():
+                while not self.model.is_win() and not self.model.is_draw():
                     if (turn%2==0):
                         self.model = self.model.game_turn_IA(self.mcts, self.rule_selection1)
                         self.grid.render(self.model.position)

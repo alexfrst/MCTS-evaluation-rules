@@ -26,7 +26,6 @@ class MCTS():
 
         # create root node
         self.root = TreeNode(initial_state, None)
-        print(initial_state.board)
 
         for iteration in range(1000):
             node = self.select(self.root, rule_selection, exploration_constant=2)
@@ -75,9 +74,9 @@ class MCTS():
             except:
                 return 0
 
-        if board.player_2 == 1:
+        if board.player_2 == "x":
             return 1
-        elif board.player_2 == 2:
+        elif board.player_2 == "o":
             return -1
 
     # backpropagate the number of visits and score up to the root node

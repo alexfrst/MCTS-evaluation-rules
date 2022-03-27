@@ -9,7 +9,10 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 import numpy as np
 import random
-#import operator
+from model.tictactoe import TicTacToeBoard
+from game.game_handler import MCTS
+
+# import operator
 
 # agent_vs_agent_test : Fonction de test
 
@@ -28,9 +31,89 @@ def agent_vs_agent_test():
     return(random.choice(list))
 
 
-def performance_agent(game, agent_to_test, agent_to_compare, nb_simulations, begin, plot=False, throttle=1):
+# def play_two_agent(agent1, agent2):
+
+
+# +
+def agent_vs_agent(game_name, size, agent_to_test, agent_to_compare, begin):
+    """
+    game_name : 'tictactoe' or 'go'
+    size : size of the board
+    agent_to_test = 'IMED' or 'UCB'
+    agent_to_compare = 'random'
+    """
+    if game_name == 'tictactoe':
+        size = 3
+        mcts = MCTS()
+        if begin:
+            rule_selection1 = agent_to_test
+            rule_selection2 = agent_to_compare
+
+            model = TicTacToeBoard(
+                                   size = size, rule_selection1 = rule_selection1, rule_selection2=rule_selection2)
+            turn = 0
+            while not model.is_win() and not model.is_draw():
+                try:
+                    if turn % 2 == 0:
+                        model.game_turn_IA(
+                            mcts, rule_selection1)
+                    else:
+                        model.game_turn_IA(
+                            mcts, rule_selection2)
+                    turn += 1
+                    print('try')
+                except Exception as e:
+                    print(e)
+                    break                
+                
+#             if turn % 2 == 0 : 
+#                 last_player = rule_selection1
+#             else : 
+#                 last_player = rule_selection2
+            if model.is_draw():
+                print('is_draw')
+                return(0)
+            elif model.is_win():
+                if (turn % 2 == 0):
+                    print('win')
+                    return(1)
+                else:
+                    print('lost')
+                    return(-1)
+
+#         else:
+#             rule_selection1 = agent_to_compare
+#             rule_selection2 = agent_to_test
+#             model = TicTacToeBoard(board,
+#                                    size, rule_selection1, rule_selection2)
+#             turn = 0
+#             while not model.is_win() and not model.is_draw():
+#                 try:
+#                     if turn % 2 == 0:
+#                         model.game_turn_IA(
+#                             mcts, rule_selection1)
+#                     else:
+#                         model.game_turn_IA(
+#                             mcts, rule_selection2)
+#                 except:
+#                     print()
+#             if model.is_win():
+#                 return(-1)
+#             elif model.is_draw():
+#                 return(0)
+#             else:
+#                 return(1)
+
+    # TODO : rajouter GO
+
+
+# -
+
+def performance_agent(game, size, agent_to_test, agent_to_compare, nb_simulations, begin, plot=False, throttle=1):
     """
     game: TicTacToe / Go
+
+    size : size of the board
 
     agent_to_test: Agent class (Specific rule selction agent)
 
@@ -68,8 +151,10 @@ def performance_agent(game, agent_to_test, agent_to_compare, nb_simulations, beg
             #result = agent_vs_agent(game,agent_to_test,agent_to_compare,begin)
 
             # test function agent_vs_agent_test
-            result = agent_vs_agent_test()
+            result = agent_vs_agent(
+                game, size, agent_to_test, agent_to_compare, begin)
             # ----
+            print(result)
 
             stats[simulation] = result
             nb_draw += int(result == 0)
@@ -82,21 +167,19 @@ def performance_agent(game, agent_to_test, agent_to_compare, nb_simulations, beg
                 pbar.set_postfix(postfix)
                 pbar.update(throttle)
 
-
-
     win_rate = nb_win/nb_simulations
     win_rate_int = int(round(win_rate, 2)*100)
     ecart_type = 1/np.sqrt(nb_simulations)
     interval = [win_rate - ecart_type, win_rate + ecart_type]
     # TODO : formule de l'intervale à 95%
     #interval_95 = [win_rate - 2*ecart_type, win_rate + 2*ecart_type]
-    
+
     if plot:
         plotstats(stats, win_rate_int)
     return(interval)
 
 
-def plotstats(stats,win_rate):
+def plotstats(stats, win_rate):
     draws = stats == 0
     agent_wins = stats == 1
 
@@ -110,15 +193,15 @@ def plotstats(stats,win_rate):
 
     ax.set_xlabel('')
     ax.legend(loc='upper left')
-    
-    plt.text(0.5,0.5,f'win rate {win_rate} %',horizontalalignment='left',
-     verticalalignment='center', transform = ax.transAxes, fontsize=14, color='r')
+
+    plt.text(0.5, 0.5, f'win rate {win_rate} %', horizontalalignment='left',
+             verticalalignment='center', transform=ax.transAxes, fontsize=14, color='r')
 
     plt.tight_layout()
     plt.show()
 
 
-def compare_agents(game, agents_to_test, agent_to_compare, nb_simulations, begin=True, plot=False):
+def compare_agents(game, size, agents_to_test, agent_to_compare, nb_simulations, begin=True, plot=False):
     """
     game: TicTacToe / Go
 
@@ -143,7 +226,7 @@ def compare_agents(game, agents_to_test, agent_to_compare, nb_simulations, begin
     win_rates = {}
 
     for agent_to_test in agents_to_test:
-        intervals[agent_to_test] = performance_agent(game,
+        intervals[agent_to_test] = performance_agent(game, size,
                                                      agent_to_test, agent_to_compare, nb_simulations, begin, plot)
         win_rate = (intervals[agent_to_test][0] +
                     intervals[agent_to_test][1])/2
@@ -174,10 +257,15 @@ def compare_agents(game, agents_to_test, agent_to_compare, nb_simulations, begin
 
 
 if __name__ == '__main__':
-    agents_to_test = ['imed', 'ucb']
-    agent_to_compare = ['aleatoire']
+    agent_to_test = 'random'
+    agent_to_compare = 'imed'
     game = 'tictactoe'
-    compare_agents(game, agents_to_test, agent_to_compare,
-                   nb_simulations=2000, begin=True, plot=True)
+    size = 3
+#     compare_agents(game, size, agents_to_test, agent_to_compare,
+#                    nb_simulations=20, begin=True, plot=True)
+
+    performance_agent(game, size, agent_to_test, agent_to_compare, nb_simulations = 5, begin = True, plot = True)
+
+
 
 

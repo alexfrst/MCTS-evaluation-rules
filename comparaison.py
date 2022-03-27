@@ -16,7 +16,6 @@ from game.game_handler import MCTS
 
 # agent_vs_agent_test : Fonction de test
 
-# A remplacer par la fonciton qui fait s'affronter deux agents entre eux
 # agent_vs_agent(game,agent_to_test, agent_to_compare, begin) :
 # En paramètres :
 # agent_to_test: Agent class (Specific rule selction agent)
@@ -26,12 +25,24 @@ from game.game_handler import MCTS
 # 1, 0,-1 if agent_to_test wins, draw, lose
 
 
-def agent_vs_agent_test():
-    list = [1, 0, -1]
-    return(random.choice(list))
-
-
-# def play_two_agent(agent1, agent2):
+def play_two_agents(rule_selection1, rule_selection2):
+    game = TicTacToeBoard(
+        size=3, rule_selection1=rule_selection1, rule_selection2=rule_selection2)
+    mcts = MCTS()
+    turn = 0
+    while not game.is_win() and not game.is_draw():
+        turn += 1
+        if (turn % 2 == 0):
+            game = game.game_turn_IA(mcts, game.rule_selection)
+        else:
+            game = game.game_turn_IA(mcts, game.rule_selection2)
+        if game.is_draw():
+            return(0)
+        elif game.is_win():
+            if (turn % 2 == 0):  # last_player = rule_selection1
+                return(1)
+            else:  # last_player = rule_selection2
+                return(-1)
 
 
 # +
@@ -40,74 +51,20 @@ def agent_vs_agent(game_name, size, agent_to_test, agent_to_compare, begin):
     game_name : 'tictactoe' or 'go'
     size : size of the board
     agent_to_test = 'IMED' or 'UCB'
-    agent_to_compare = 'random'
+    agent_to_compare = 'RANDOM'
     """
     if game_name == 'tictactoe':
-        size = 3
-        mcts = MCTS()
         if begin:
             rule_selection1 = agent_to_test
             rule_selection2 = agent_to_compare
+            result = play_two_agents(rule_selection1, rule_selection2)
+            return (result)
 
-            model = TicTacToeBoard(
-                                   size = size, rule_selection1 = rule_selection1, rule_selection2=rule_selection2)
-            turn = 0
-            while not model.is_win() and not model.is_draw():
-                try:
-                    if turn % 2 == 0:
-                        model.game_turn_IA(
-                            mcts, rule_selection1)
-                    else:
-                        model.game_turn_IA(
-                            mcts, rule_selection2)
-                    turn += 1
-                    print('try')
-                except Exception as e:
-                    print(e)
-                    break                
-                
-#             if turn % 2 == 0 : 
-#                 last_player = rule_selection1
-#             else : 
-#                 last_player = rule_selection2
-            if model.is_draw():
-                print('is_draw')
-                return(0)
-            elif model.is_win():
-                if (turn % 2 == 0):
-                    print('win')
-                    return(1)
-                else:
-                    print('lost')
-                    return(-1)
-
-#         else:
-#             rule_selection1 = agent_to_compare
-#             rule_selection2 = agent_to_test
-#             model = TicTacToeBoard(board,
-#                                    size, rule_selection1, rule_selection2)
-#             turn = 0
-#             while not model.is_win() and not model.is_draw():
-#                 try:
-#                     if turn % 2 == 0:
-#                         model.game_turn_IA(
-#                             mcts, rule_selection1)
-#                     else:
-#                         model.game_turn_IA(
-#                             mcts, rule_selection2)
-#                 except:
-#                     print()
-#             if model.is_win():
-#                 return(-1)
-#             elif model.is_draw():
-#                 return(0)
-#             else:
-#                 return(1)
-
-    # TODO : rajouter GO
-
+        # TODO : when not begin
+        # TODO : jeu de go
 
 # -
+
 
 def performance_agent(game, size, agent_to_test, agent_to_compare, nb_simulations, begin, plot=False, throttle=1):
     """
@@ -146,15 +103,9 @@ def performance_agent(game, size, agent_to_test, agent_to_compare, nb_simulation
     }
     with tqdm(total=nb_simulations, postfix=postfix) as pbar:
         for simulation in range(nb_simulations):
-            # ----- Change the function to agent_vs_agent
-            # uncomment when testing with real agents
-            #result = agent_vs_agent(game,agent_to_test,agent_to_compare,begin)
-
-            # test function agent_vs_agent_test
             result = agent_vs_agent(
                 game, size, agent_to_test, agent_to_compare, begin)
             # ----
-            print(result)
 
             stats[simulation] = result
             nb_draw += int(result == 0)
@@ -257,15 +208,9 @@ def compare_agents(game, size, agents_to_test, agent_to_compare, nb_simulations,
 
 
 if __name__ == '__main__':
-    agent_to_test = 'random'
-    agent_to_compare = 'imed'
-    game = 'tictactoe'
+    agents_to_test = ['IMED', 'UCB']
+    agent_to_compare = ['random']
+    game_name = 'tictactoe'
     size = 3
-#     compare_agents(game, size, agents_to_test, agent_to_compare,
-#                    nb_simulations=20, begin=True, plot=True)
-
-    performance_agent(game, size, agent_to_test, agent_to_compare, nb_simulations = 5, begin = True, plot = True)
-
-
-
-
+    compare_agents(game_name, size, agents_to_test, agent_to_compare,
+                   nb_simulations=200, begin=True, plot=True)

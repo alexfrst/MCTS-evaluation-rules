@@ -1,5 +1,5 @@
-from copy import deepcopy
 from game.game_handler import MCTS
+from copy import deepcopy
 
 
 class TicTacToeBoard():
@@ -178,11 +178,11 @@ class TicTacToeBoard():
             print(e)
             pass
 
-        if self.is_win():
-            print("AI won the game")
+        # if self.is_win():
+        #     #print("AI won the game")
 
-        # check if the game is drawn
-        elif self.is_draw():
-            print('Game is drawn!\n')
+        #     # check if the game is drawn
+        # elif self.is_draw():
+        #     #print('Game is drawn!\n')
 
         return self

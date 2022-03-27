@@ -43,23 +43,16 @@ def klBern(x, y):
     return x*log(x/y) + (1-x)*log((1-x)/(1-y))
 
 
+def klGauss(x, y, sig2=1.):
+    """Kullback-Leibler divergence for Gaussian distributions."""
+    return (x-y)*(x-y)/(2*sig2)
+
+
 def IMED_selection(node, kullback):
     best_score = float('inf')
     best_moves = []
     means = []
     for child_node in node.children.values():
-        # # define current player
-        # if child_node.board.player_2 == 'x':
-        #     current_player = 1
-        # elif child_node.board.player_2 == 'o':
-        #     current_player = -1
-
-        # means.append((current_player*child_node.score)/child_node.visits)
-        # maxMeans = max(means)
-
-        # move_score = child_node.visits * kullback((current_player*child_node.score)/child_node.visits, maxMeans) + math.log(
-        #     child_node.visits) if child_node.visits > 0 else -1
-
         means.append((child_node.score)/child_node.visits)
         maxMeans = max(means)
 

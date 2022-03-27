@@ -55,16 +55,16 @@ class GameWindow(Toplevel):
                 while not self.model.is_win() or not self.model.is_draw():
                     if (turn%2==0):
                         self.model = self.model.game_turn_IA(self.mcts, self.rule_selection1)
-                        self.grid.render(self.model.position)
+                        self.grid.render(self.model.render())
                         self.update()
                     else:
                         self.model = self.model.game_turn_IA(self.mcts, self.rule_selection2)
-                        self.grid.render(self.model.position)
+                        self.grid.render(self.model.render())
                         self.update()
             else: #
                 print("------IA vs Human------")
                 self.model = self.model.game_turn_IA(self.mcts, self.rule_selection1)
-                self.grid.render(self.model.position)
+                self.grid.render(self.model.render())
                 self.update()
 
         
@@ -74,25 +74,25 @@ class GameWindow(Toplevel):
         if (self.rule_selection1!= "Human" and self.rule_selection2 == "Human"):
             print("1) IA contre Humain")
             self.model = self.model.game_turn_player(pos)
-            self.grid.render(self.model.position)
+            self.grid.render(self.model.render())
             self.update()
             self.model = self.model.game_turn_IA(self.mcts, self.rule_selection1)
-            self.grid.render(self.model.position)
+            self.grid.render(self.model.render())
             self.update()
 
         elif (self.rule_selection1 == "Human" and self.rule_selection2 != "Human"):
             print("2) Humain contre IA")
             self.model = self.model.game_turn_player(pos)
-            self.grid.render(self.model.position)
+            self.grid.render(self.model.render())
             self.update()
             self.model = self.model.game_turn_IA(self.mcts, self.rule_selection2)
-            self.grid.render(self.model.position)
+            self.grid.render(self.model.render())
             self.update()
 
         else :  #(self.rule_selection1 == "Human" and self.rule_selection2 == "Human"):
             print("3) Humain contre Humain")
             self.model = self.model.game_turn_player(pos)
-            self.grid.render(self.model.position)
+            self.grid.render(self.model.render())
             self.update()
 
 

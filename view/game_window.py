@@ -1,7 +1,7 @@
 from tkinter import Label, Button, StringVar, Toplevel
 import tkinter.font as tkFont
 from game.game_handler import MCTS
-#from view.start_window import StartWindow A MODIF = on ajoute en paramètre la start window dans gamewindow
+# from view.start_window import StartWindow A MODIF = on ajoute en paramètre la start window dans gamewindow
 from view.grid import GameGrid
 #from model.tictactoe import MCTS
 
@@ -23,13 +23,15 @@ class GameWindow(Toplevel):
         self.configure(padx=10, pady=10)
         self.startwindow = startwindow
         self.game = startwindow.game_choices[startwindow.gameChoice.get()]
-  
+
         self.normal_font = tkFont.Font(family="Helvetica", size=16)
         self.option_add("*TCombobox*Listbox*Font", self.normal_font)
         self.title("MCTS Project")
 
-        label1 = Label(self, text="Bienvenue dans notre simulateur !", font=("Helvetica", 20, 'bold'))
-        label2 = Label(self, text="Vous jouez actuellement à : A MODIFIER", font=self.normal_font) 
+        label1 = Label(self, text="Bienvenue dans notre simulateur !",
+                       font=("Helvetica", 20, 'bold'))
+        label2 = Label(
+            self, text="Vous jouez actuellement à : A MODIFIER", font=self.normal_font)
         label1.grid(column=0, row=0, padx=50)
         label2.grid(column=0, row=1, padx=50, pady=10)
 
@@ -37,10 +39,11 @@ class GameWindow(Toplevel):
         self.mcts = MCTS()
         self.grid = GameGrid(self, model.height, model.width, self.game)
 
-        restart_button = Button(self, text ="Rejouer", font=self.normal_font, command = self.restart)
+        restart_button = Button(self, text="Rejouer",
+                                font=self.normal_font, command=self.restart)
         restart_button.grid(column=0, row=1+self.model.height, pady=10)
 
-        self.label3 = Label(self, text="", font=self.normal_font) 
+        self.label3 = Label(self, text="", font=self.normal_font)
         self.label3.grid(column=0, row=2+self.model.height)
         self.update()
 
@@ -95,9 +98,8 @@ class GameWindow(Toplevel):
             self.grid.render(self.model.position)
             self.update()
 
-
     def changeText(self):
-        self.label3['text'] = "update" #A MODIFIER : Rajouter qui a gagné
+        self.label3['text'] = "update"  # A MODIFIER : Rajouter qui a gagné
 
     def restart(self):
         self.destroy()
@@ -107,7 +109,3 @@ class GameWindow(Toplevel):
         self.destroy()
         self.startwindow.destroy()
 
-class MyModel:
-    def __init__(self):
-        self.height = 8
-        self.width = 8

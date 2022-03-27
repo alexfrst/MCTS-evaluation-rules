@@ -1,10 +1,9 @@
-from copy import deepcopy
 from game.game_handler import MCTS
+from copy import deepcopy
 
 
 class TicTacToeBoard():
     # create constructor (init board class instance)
-    #def __init__(self, board=None, rule_selection='UCB', size=3):
     def __init__(self, board=None, size=3, rule_selection1 = 'UCB', rule_selection2 = 'IMED', sequence_length=3):
         # define players
         self.player_1 = 'x'
@@ -179,12 +178,11 @@ class TicTacToeBoard():
             print(e)
             pass
 
-        if self.is_win():
-            print("AI won the game")
+        # if self.is_win():
+        #     #print("AI won the game")
 
-        # check if the game is drawn
-        elif self.is_draw():
-            print('Game is drawn!\n')
+        #     # check if the game is drawn
+        # elif self.is_draw():
+        #     #print('Game is drawn!\n')
 
         return self
-

@@ -5,26 +5,23 @@ import numpy as np
 from copy import deepcopy
 from itertools import product
 
-BOARD_SIZE = 9
-STONE_COUNTS = 90
-GENERAL = 0
-
-
 class Color:
     BLACK = 'o'
     WHITE = "x"
 
 
-class Board():
+class GoBoard():
     # create constructor (init board class instance)
-    def __init__(self, board=None, rule_selection='UCB'):
+    def __init__(self, board=None,size =9,rule_selection1 = 'UCB', rule_selection2 = 'IMED'):
 
         # define players
         self.player_1 = Color.BLACK
         self.player_2 = Color.WHITE
-        self.height = BOARD_SIZE
-        self.width = BOARD_SIZE
-        self.rule_selection = rule_selection
+        self.height = size
+        self.width = size
+        self.size = size
+        self.rule_selection = rule_selection1
+        self.rule_selection2 = rule_selection2
         self.empty_square = 0
         self.played_turns = 0
         self.prisoners = {
@@ -33,7 +30,7 @@ class Board():
         }
 
         # define board position
-        self.board = np.zeros((BOARD_SIZE, BOARD_SIZE), dtype=str)
+        self.board = np.full((self.size, self.size), fill_value=".", dtype=str)
 
         # init (reset) board
         self.init_board()
@@ -41,10 +38,6 @@ class Board():
         if board is not None:
             self.__dict__ = deepcopy(board.__dict__)
             self.board = deepcopy(board.board)
-            board.board[0, 0] -= 1
-            assert board.board[0, 0] != self.board[0, 0]
-            board.board[0, 0] += 1
-            assert board.board[0, 0] == self.board[0, 0]
 
     def has_no_liberties(self, group):
         """Check if a stone group has any liberties on a given board.
@@ -54,13 +47,13 @@ class Board():
             [boolean]: True if group has any liberties, False otherwise
         """
         for x, y in group:
-            if x > 0 and self.board[x - 1, y] == 0:
+            if x > 0 and self.board[x - 1, y] == ".":
                 return False
-            if y > 0 and self.board[x, y - 1] == 0:
+            if y > 0 and self.board[x, y - 1] == ".":
                 return False
-            if x < self.board.shape[0] - 1 and self.board[x + 1, y] == 0:
+            if x < self.board.shape[0] - 1 and self.board[x + 1, y] == ".":
                 return False
-            if y < self.board.shape[0] - 1 and self.board[x, y + 1] == 0:
+            if y < self.board.shape[0] - 1 and self.board[x, y + 1] == ".":
                 return False
         return True
 
@@ -79,7 +72,7 @@ class Board():
 
     # init (reset) board
     def init_board(self):
-        self.board = np.zeros((BOARD_SIZE, BOARD_SIZE))
+        self.board = np.full((self.size, self.size),fill_value='.', dtype=str)
 
     def get_stone_groups(self,color):
         """Get stone groups of a given color on a given board
@@ -99,42 +92,31 @@ class Board():
     # make move
     def make_move(self, row, col):
         # create new board instance that inherits from the current state
-        board = Board(self)
+        board = GoBoard(self)
 
         # make move
-        board.board[row, col] = self.player_1
-        board.played_turns[self.player_1] += 1
+        #print(board.player_1)
+        board.board[row, col] = board.player_1
+        board.played_turns += 1
 
         # handle captures
         capture_happened = False
-        for group in list(self.get_stone_groups(self.player_2)):
-            if self.has_no_liberties(group):
-                capture_happened = True
+        for group in list(board.get_stone_groups(board.player_2)):
+            if board.has_no_liberties(group):
                 for i, j in group:
-                    self.board[i, j] = 0
-                self.prisoners[self.player_1] += len(group)
-
-        # handle special case of invalid stone placement
-        # this must be done separately because we need to know if capture resulted
-        if not capture_happened:
-            group = None
-            for group in self.get_stone_groups():
-                if (col, row) in group:
-                    break
-            if self.has_no_liberties(group):
-                self.board[col, row] = 0
-                return
+                    board.board[i, j] = "."
+                board.prisoners[board.player_1] += len(group)
 
         # swap players
         (board.player_1, board.player_2) = (board.player_2, board.player_1)
-        self.played_turns += 1
+        board.played_turns += 1
 
         return board
 
     # get whether the game is drawn
     def is_draw(self):
         # loop over board squares
-        for row, col in product(range(BOARD_SIZE), range(BOARD_SIZE)):
+        for row, col in product(range(self.size), range(self.size)):
             # empty square is available
             if self.board[row, col] == self.empty_square:
                 # this is not a draw
@@ -145,7 +127,7 @@ class Board():
 
     # get whether the game is won
     def is_win(self):
-        if self.played_turns[self.player_1] <= STONE_COUNTS:
+        if self.played_turns <= 30:
             return False
 
         return self.prisoners[self.player_1] >= self.prisoners[self.player_2]

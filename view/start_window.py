@@ -1,5 +1,6 @@
 from view.game_window import GameWindow
 from model.tictactoe import TicTacToeBoard
+from model.go import GoBoard
 
 from tkinter import Tk, Label, Frame, Button, Scale
 import tkinter.ttk as ttk
@@ -76,5 +77,6 @@ class StartWindow(Tk):
             game.mainloop()
 
         else: #go
-            print("Le jeu de GO est bientôt dispo")
+            game = GameWindow(GoBoard(**game_args), self)
+            game.mainloop()
 

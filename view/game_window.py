@@ -49,10 +49,24 @@ class GameWindow(Toplevel):
 
         #Si l'IA doit commencer
         if self.rule_selection1 != "Human":
-             print("------IA vs Humain (ou IA vs IA)------")
-             self.model = self.model.game_turn_IA(self.mcts, self.rule_selection1)
-             self.grid.render(self.model.position)
-             self.update()
+            if self.rule_selection2 != "Human":
+                print("------IA vs IA------")
+                turn = 0
+                while not self.model.is_win() or not self.model.is_draw():
+                    if (turn%2==0):
+                        self.model = self.model.game_turn_IA(self.mcts, self.rule_selection1)
+                        self.grid.render(self.model.position)
+                        self.update()
+                    else:
+                        self.model = self.model.game_turn_IA(self.mcts, self.rule_selection2)
+                        self.grid.render(self.model.position)
+                        self.update()
+            else: #
+                print("------IA vs Human------")
+                self.model = self.model.game_turn_IA(self.mcts, self.rule_selection1)
+                self.grid.render(self.model.position)
+                self.update()
+
         
 
     def play(self, pos):
@@ -66,17 +80,8 @@ class GameWindow(Toplevel):
             self.grid.render(self.model.position)
             self.update()
 
-        elif (self.rule_selection1!= "Human" and self.rule_selection2 != "Human"):
-            print("2) IA contre IA")
-            self.model = self.model.game_turn_IA(self.mcts, self.rule_selection2) #car l'IA 1 a déjà commencé à jouer 
-            self.grid.render(self.model.position)
-            self.update()
-            self.model = self.model.game_turn_IA(self.mcts, self.rule_selection1)
-            self.grid.render(self.model.position)
-            self.update()
-
         elif (self.rule_selection1 == "Human" and self.rule_selection2 != "Human"):
-            print("3) Humain contre IA")
+            print("2) Humain contre IA")
             self.model = self.model.game_turn_player(pos)
             self.grid.render(self.model.position)
             self.update()
@@ -85,10 +90,7 @@ class GameWindow(Toplevel):
             self.update()
 
         else :  #(self.rule_selection1 == "Human" and self.rule_selection2 == "Human"):
-            print("4) Humain contre Humain")
-            self.model = self.model.game_turn_player(pos)
-            self.grid.render(self.model.position)
-            self.update()
+            print("3) Humain contre Humain")
             self.model = self.model.game_turn_player(pos)
             self.grid.render(self.model.position)
             self.update()

@@ -31,9 +31,9 @@ class TicTacToeBoard():
     # init (reset) board
     def init_board(self):
         # loop over board rows
-        for row in range(3):
+        for row in range(self.height):
             # loop over board columns
-            for col in range(3):
+            for col in range(self.width):
                 # set every board square to empty square
                 self.position[row, col] = self.empty_square
 
@@ -70,12 +70,12 @@ class TicTacToeBoard():
         ##################################
 
         # loop over board columns
-        for col in range(3):
+        for col in range(self.width):
             # define winning sequence list
             winning_sequence = []
 
             # loop over board rows
-            for row in range(3):
+            for row in range(self.height):
                 # if found same next element in the row
                 if self.position[row, col] == self.player_2:
                     # update winning sequence
@@ -91,12 +91,12 @@ class TicTacToeBoard():
         ##################################
 
         # loop over board columns
-        for row in range(3):
+        for row in range(self.height):
             # define winning sequence list
             winning_sequence = []
 
             # loop over board rows
-            for col in range(3):
+            for col in range(self.width):
                 # if found same next element in the row
                 if self.position[row, col] == self.player_2:
                     # update winning sequence
@@ -115,7 +115,7 @@ class TicTacToeBoard():
         winning_sequence = []
 
         # loop over board rows
-        for row in range(3):
+        for row in range(self.height):
             # init column
             col = row
 
@@ -131,9 +131,9 @@ class TicTacToeBoard():
         winning_sequence = []
 
         # loop over board rows
-        for row in range(3):
+        for row in range(self.height):
             # init column
-            col = 3 - row - 1
+            col = self.width - row - 1
 
             # if found same next element in the row
             if self.position[row, col] == self.player_2:
@@ -154,9 +154,9 @@ class TicTacToeBoard():
         actions = []
 
         # loop over board rows
-        for row in range(3):
+        for row in range(self.height):
             # loop over board columns
-            for col in range(3):
+            for col in range(self.width):
                 # make sure that current square is empty
                 if self.position[row, col] == self.empty_square:
                     # append available action/board state to action list

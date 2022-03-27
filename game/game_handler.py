@@ -27,7 +27,7 @@ class MCTS():
         # create root node
         self.root = TreeNode(initial_state, None)
 
-        for iteration in range(1000):
+        for iteration in range(1000//len(initial_state.render())):
             node = self.select(self.root, rule_selection, exploration_constant=2)
             score = self.rollout(node.board)
             self.backpropagate(node, score)

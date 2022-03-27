@@ -43,7 +43,7 @@ class GameWindow(Tk):
         self.label3.grid(column=0, row=2+self.model.height)
         self.update()
 
-        if self.model.rule_selection != "Human":
+        if self.model.rule_selection != "Human" and self.model.rule_selection2 == "Human":
              self.model = self.model.game_turn_IA(self.mcts, self.model.rule_selection)
              self.grid.render(self.model.position)
              self.update()

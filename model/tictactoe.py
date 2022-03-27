@@ -2,16 +2,18 @@ from copy import deepcopy
 from game.game_handler import MCTS
 
 
-class Board():
+class TicTacToeBoard():
     # create constructor (init board class instance)
-    def __init__(self, board=None, rule_selection='UCB'):
+    # def __init__(self, board=None, rule_selection='UCB', size=3):
+    def __init__(self, board=None, size=3, rule_selection1='UCB', rule_selection2='IMED'):
         # define players
         self.player_1 = 'x'
         self.player_2 = 'o'
-        self.height = 3
-        self.width = 3
+        self.height = size
+        self.width = size
         self.empty_square = '.'
-        self.rule_selection = rule_selection
+        self.rule_selection = rule_selection1
+        self.rule_selection2 = rule_selection2
 
         # define board position
         self.position = {}
@@ -23,19 +25,22 @@ class Board():
         if board is not None:
             self.__dict__ = deepcopy(board.__dict__)
 
+    def render(self):
+        return self.position
+
     # init (reset) board
     def init_board(self):
         # loop over board rows
-        for row in range(3):
+        for row in range(self.height):
             # loop over board columns
-            for col in range(3):
+            for col in range(self.width):
                 # set every board square to empty square
                 self.position[row, col] = self.empty_square
 
     # make move
     def make_move(self, row, col):
         # create new board instance that inherits from the current state
-        board = Board(self)
+        board = TicTacToeBoard(self)
 
         # make move
         board.position[row, col] = self.player_1
@@ -65,12 +70,12 @@ class Board():
         ##################################
 
         # loop over board columns
-        for col in range(3):
+        for col in range(self.width):
             # define winning sequence list
             winning_sequence = []
 
             # loop over board rows
-            for row in range(3):
+            for row in range(self.height):
                 # if found same next element in the row
                 if self.position[row, col] == self.player_2:
                     # update winning sequence
@@ -86,12 +91,12 @@ class Board():
         ##################################
 
         # loop over board columns
-        for row in range(3):
+        for row in range(self.height):
             # define winning sequence list
             winning_sequence = []
 
             # loop over board rows
-            for col in range(3):
+            for col in range(self.width):
                 # if found same next element in the row
                 if self.position[row, col] == self.player_2:
                     # update winning sequence
@@ -110,7 +115,7 @@ class Board():
         winning_sequence = []
 
         # loop over board rows
-        for row in range(3):
+        for row in range(self.height):
             # init column
             col = row
 
@@ -123,18 +128,12 @@ class Board():
             if len(winning_sequence) == 3:
                 # return the game is won state
                 return True
-
-        ##################################
-        # 2nd diagonal sequence detection
-        ##################################
-
-        # define winning sequence list
         winning_sequence = []
 
         # loop over board rows
-        for row in range(3):
+        for row in range(self.height):
             # init column
-            col = 3 - row - 1
+            col = self.width - row - 1
 
             # if found same next element in the row
             if self.position[row, col] == self.player_2:
@@ -155,9 +154,9 @@ class Board():
         actions = []
 
         # loop over board rows
-        for row in range(3):
+        for row in range(self.height):
             # loop over board columns
-            for col in range(3):
+            for col in range(self.width):
                 # make sure that current square is empty
                 if self.position[row, col] == self.empty_square:
                     # append available action/board state to action list
@@ -170,11 +169,13 @@ class Board():
     def game_turn_player(self, pos):
         return self.make_move(*pos)
 
-    def game_turn_IA(self, mcts):
+    def game_turn_IA(self, mcts, rule_selection):
         try:
-            best_move = mcts.search(self, self.rule_selection)
+            best_move = mcts.search(self, rule_selection)
             self = best_move.board
-        except:
+        except Exception as e:
+            print(e.with_traceback())
+            print(e)
             pass
 
         if self.is_win():
@@ -185,7 +186,3 @@ class Board():
             print('Game is drawn!\n')
 
         return self
-
-
-# create board instance
-board = Board()

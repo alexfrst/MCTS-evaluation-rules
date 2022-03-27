@@ -1,7 +1,10 @@
-from view.game_window import GameWindow
-from model.tictactoe import Board
+from view.start_window import StartWindow
 
-# choose between 'IMED' 'UCB' 'random'
-rule_selection = 'random'
+"""
+rule_selection = 'UCB'
 game = GameWindow(Board(rule_selection=rule_selection))
+game.mainloop()
+"""
+
+game = StartWindow()
 game.mainloop()

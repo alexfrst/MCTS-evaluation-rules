@@ -4,13 +4,13 @@ from copy import deepcopy
 
 class TicTacToeBoard():
     # create constructor (init board class instance)
-    # def __init__(self, board=None, rule_selection='UCB', size=3):
-    def __init__(self, board=None, size=3, rule_selection1='UCB', rule_selection2='IMED'):
+    def __init__(self, board=None, size=3, rule_selection1 = 'UCB', rule_selection2 = 'IMED', sequence_length=3):
         # define players
         self.player_1 = 'x'
         self.player_2 = 'o'
         self.height = size
         self.width = size
+        self.sequence_length = sequence_length
         self.empty_square = '.'
         self.rule_selection = rule_selection1
         self.rule_selection2 = rule_selection2
@@ -82,7 +82,7 @@ class TicTacToeBoard():
                     winning_sequence.append((row, col))
 
                 # if we have 3 elements in the row
-                if len(winning_sequence) == 3:
+                if len(winning_sequence) == self.sequence_length:
                     # return the game is won state
                     return True
 
@@ -103,7 +103,7 @@ class TicTacToeBoard():
                     winning_sequence.append((row, col))
 
                 # if we have 3 elements in the row
-                if len(winning_sequence) == 3:
+                if len(winning_sequence) == self.sequence_length:
                     # return the game is won state
                     return True
 
@@ -125,7 +125,7 @@ class TicTacToeBoard():
                 winning_sequence.append((row, col))
 
             # if we have 3 elements in the row
-            if len(winning_sequence) == 3:
+            if len(winning_sequence) == self.sequence_length:
                 # return the game is won state
                 return True
         winning_sequence = []
@@ -141,7 +141,7 @@ class TicTacToeBoard():
                 winning_sequence.append((row, col))
 
             # if we have 3 elements in the row
-            if len(winning_sequence) == 3:
+            if len(winning_sequence) == self.sequence_length:
                 # return the game is won state
                 return True
 

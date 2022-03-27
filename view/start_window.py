@@ -1,7 +1,7 @@
 from view.game_window import GameWindow
 from model.tictactoe import TicTacToeBoard
 
-from tkinter import Tk, Label, Frame, Button, Scale
+from tkinter import Tk, Label, Frame, Button, Scale, StringVar
 import tkinter.ttk as ttk
 import tkinter.font as tkFont
 from PIL import Image, ImageTk
@@ -31,12 +31,16 @@ class StartWindow(Tk):
         frame1 = Frame(self)
         frame1.pack(padx=50, pady=10)
         Label(frame1, text="Choisissez un jeu : ", font=normal_font).pack(side='left')
-        self.gameChoice = ttk.Combobox(frame1, values=list(self.game_choices.keys()), font=normal_font,  width=22)
+        self.sel=StringVar() # string variable 
+        self.gameChoice = ttk.Combobox(frame1, values=list(self.game_choices.keys()), font=normal_font,  width=22, textvariable=self.sel)
         self.gameChoice.pack(side='left')
         self.gameChoice.current(0)
 
-        self.slider = Scale(self, orient='horizontal', from_=3, to=19, tickinterval=2, length=350, label='Choisissez la taille de la grille (t x t) : ', font = normal_font, troughcolor="#e88032", activebackground = "#a15017")
+        self.slider = Scale(self, orient='horizontal', from_=3, to=19, tickinterval=2, length=400, label='Choisissez la taille de la grille (t x t) : ', font = normal_font, troughcolor="#e88032", activebackground = "#a15017")
         self.slider.pack()
+
+        self.slider2 = Scale(self, orient='horizontal', from_=3, to=7, tickinterval=1, length=400, label='Pions à aligner pour gagner (TicTacToe) : ', font = normal_font, troughcolor="#e88032", activebackground = "#a15017")
+        self.slider2.pack()
 
         frame2 = Frame(self)
         frame2.pack(padx=50, pady=10)
@@ -51,15 +55,21 @@ class StartWindow(Tk):
         self.player2 = ttk.Combobox(frame3, values=list(self.selection_rule_choices.keys()), font=normal_font)
         self.player2.pack(side='left')
         self.player2.current(3)
+        self.sel.trace('w',self.my_upd)
 
         start_button = Button(self, text ="Commencer", font=normal_font, command = self.startGame)
         start_button.pack(pady=10)
+
+    def my_upd(self, *args):
+        if (self.game_choices[self.gameChoice.get()] == 'go'):
+            self.slider2["state"] = "disabled"
 
 
     def startGame(self):
 
         selected_game = self.game_choices[self.gameChoice.get()]
         size = int(self.slider.get())
+        sequence_length = int(self.slider2.get())
         player1 = self.selection_rule_choices[self.player1.get()]
         player2 = self.selection_rule_choices[self.player2.get()]
 
@@ -72,7 +82,7 @@ class StartWindow(Tk):
         self.withdraw()
 
         if (selected_game == "tictactoe"):
-            game = GameWindow(TicTacToeBoard(**game_args), self)
+            game = GameWindow(TicTacToeBoard(**game_args, sequence_length=sequence_length), self)
             game.mainloop()
 
         else: #go

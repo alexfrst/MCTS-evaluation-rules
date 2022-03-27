@@ -41,6 +41,13 @@ class GameWindow(Tk):
 
         self.label3 = Label(self, text="", font=self.normal_font) 
         self.label3.grid(column=0, row=2+self.model.height)
+        self.update()
+
+        if self.model.rule_selection != "Human":
+             self.model = self.model.game_turn_IA(self.mcts, self.model.rule_selection)
+             self.grid.render(self.model.position)
+             self.update()
+
 
         
 
@@ -49,9 +56,9 @@ class GameWindow(Tk):
         rule_selection1 = self.model.rule_selection
         rule_selection2 = self.model.rule_selection2
 
-        if (rule_selection1=="Human" or rule_selection2=="Human"): #Humain VS IA
+        if rule_selection1== "Human" or rule_selection2== "Human": #Humain VS IA
 
-            if(rule_selection1=="Human"): 
+            if rule_selection1== "Human":
                 self.model = self.model.game_turn_player(pos)
                 self.grid.render(self.model.position)
                 self.update()

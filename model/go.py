@@ -33,7 +33,7 @@ class Board():
         }
 
         # define board position
-        self.board = np.zeros((BOARD_SIZE, BOARD_SIZE), dtype=int)
+        self.board = np.zeros((BOARD_SIZE, BOARD_SIZE), dtype=str)
 
         # init (reset) board
         self.init_board()
@@ -69,8 +69,7 @@ class Board():
 
     def get_player_group(self, board, color: Color):
         size = board.shape[0]
-        color_code = 1 if color == "black" else 2
-        xs, ys = np.where(board == color_code)
+        xs, ys = np.where(board == color)
         graph = nx.grid_graph(dim=[size, size])
         stones = set(zip(xs, ys))
         all_spaces = set(product(range(size), range(size)))
@@ -190,6 +189,3 @@ class Board():
             print('Game is drawn!\n')
         print("Ended AI turn")
         return self
-
-        # get stone groups for black and white
-

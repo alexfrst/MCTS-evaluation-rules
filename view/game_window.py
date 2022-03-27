@@ -1,4 +1,4 @@
-from tkinter import Tk, Label, Button, StringVar
+from tkinter import Label, Button, StringVar, Toplevel
 import tkinter.font as tkFont
 from game.game_handler import MCTS
 #from view.start_window import StartWindow A MODIF = on ajoute en paramètre la start window dans gamewindow
@@ -6,7 +6,7 @@ from view.grid import GameGrid
 #from model.tictactoe import MCTS
 
 
-class GameWindow(Tk):
+class GameWindow(Toplevel):
     def __init__(self, model, startwindow):
         super().__init__()
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -22,6 +22,7 @@ class GameWindow(Tk):
         """
         self.configure(padx=10, pady=10)
         self.startwindow = startwindow
+        self.game = startwindow.game_choices[startwindow.gameChoice.get()]
   
         self.normal_font = tkFont.Font(family="Helvetica", size=16)
         self.option_add("*TCombobox*Listbox*Font", self.normal_font)
@@ -34,7 +35,7 @@ class GameWindow(Tk):
 
         self.model = model
         self.mcts = MCTS()
-        self.grid = GameGrid(self, model.height, model.width)
+        self.grid = GameGrid(self, model.height, model.width, self.game)
 
         restart_button = Button(self, text ="Rejouer", font=self.normal_font, command = self.restart)
         restart_button.grid(column=0, row=1+self.model.height, pady=10)

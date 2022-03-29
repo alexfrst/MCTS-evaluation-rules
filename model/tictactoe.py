@@ -181,7 +181,7 @@ class TicTacToeBoard():
             best_move = mcts.search(self, rule_selection)
             self = best_move.board
         except Exception as e:
-            print(e.with_traceback())
+            print(e.with_traceback(None))
             print(e)
             pass
 

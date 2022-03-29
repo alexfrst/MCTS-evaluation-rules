@@ -13,15 +13,7 @@ class GameWindow(Toplevel):
         super().__init__()
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.title("MCTS Project")
-        """
-        self.configure(bg="#333333", padx=10, pady=10)
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-        self.geometry(f'{screen_width//2}x{screen_height//2}')
 
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
-        """
         self.configure(padx=10, pady=10)
         self.startwindow = startwindow
         self.game = startwindow.game_choices[startwindow.gameChoice.get()]
@@ -31,6 +23,7 @@ class GameWindow(Toplevel):
         self.grid = GameGrid(self, model.height, model.width, self.game)
         self.rule_selection1 = self.model.rule_selection
         self.rule_selection2 = self.model.rule_selection2
+        self.prisoners = {"x": 0, "o": 0}
 
         text_label2 = f"Grille de taille : {self.model.height}x{self.model.width}"
         player1_piece = "X" if self.game == 'tictactoe' else "BLACK"
@@ -86,6 +79,13 @@ class GameWindow(Toplevel):
                 self.grid.render(self.model.render())
                 self.update()
 
+    def update_prisoners(self):
+        if hasattr(self.model, "prisoners_player_1"):
+            self.prisoners[self.model.player_1] = self.model.prisoners_player_1
+            self.prisoners[self.model.player_2] = self.model.prisoners_player_2
+        #mettre à jour l'interface
+        print(f"Prisoners : {self.prisoners}")
+        return self.prisoners
         
 
     def play(self, pos):
@@ -124,13 +124,31 @@ class GameWindow(Toplevel):
                 self.update()
 
             if (self.model.is_win() or self.model.is_draw()):
-                self.changeText("La partie est terminée")
+                end_text = "La partie est terminée"
+                if (self.model.is_draw()):
+                    end_text+=" et il y a match nul."
+                else:
+
+                    if (self.game == "go"):
+                        prisoners = self.update_prisoners()
+
+                        prisoners_player1 = prisoners["x"]
+                        prisoners_player2 = prisoners["o"]
+
+                        if (prisoners_player1 > prisoners_player2):
+                            end_text+=f"\nLe joueur 1 a gagné avec {prisoners_player1} prisonniers contre {prisoners_player2} prisonniers pour le joueur 2."
+                        else:
+                            end_text+=f"\nLe joueur 2 a gagné avec {prisoners_player2} prisonniers contre {prisoners_player1} prisonniers pour le joueur 1."
+
+                    self.changeText(end_text)
+
                 for i,j in product(range(self.model.height, self.model.width)):
                     self.cases[i][j]["state"] = DISABLED
                 self.update()
 
     def changeText(self, message):
-        self.label3['text'] = message  # A MODIFIER : Rajouter qui a gagné
+        self.label3['text'] = message
+
 
     def restart(self):
         self.destroy()

@@ -71,6 +71,10 @@ class GameWindow(Toplevel):
 
     def play(self, pos):
 
+        if not self.model.is_valid_move(*pos):
+            print("Invalid move")
+            return
+
         if (self.rule_selection1!= "Human" and self.rule_selection2 == "Human"):
             print("1) IA contre Humain")
             self.model = self.model.game_turn_player(pos)

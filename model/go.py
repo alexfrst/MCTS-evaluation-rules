@@ -1,4 +1,5 @@
 import itertools
+import random
 
 import networkx as nx
 import numpy as np
@@ -24,10 +25,10 @@ class GoBoard():
         self.rule_selection2 = rule_selection2
         self.empty_square = '.'
         self.played_turns = 0
-        self.prisoners = {
-            Color.BLACK: 0,
-            Color.WHITE: 0
-        }
+        self.prisoners_player_1 = 0
+        self.prisoners_player_2 = 0
+        self.stones_per_player = (size-1)**2 + (size/2)
+        self.one_player_capitulated = False
 
         # define board position
         self.board = np.full((self.size, self.size), fill_value=".", dtype=str)
@@ -97,7 +98,9 @@ class GoBoard():
         # make move
         #print(board.player_1)
         board.board[row, col] = board.player_1
-        board.played_turns += 1
+
+        if board.prisoners_player_1 < board.prisoners_player_2 and random.random() < 0:
+            self.one_player_capitulated = True
 
         # handle captures
         capture_happened = False
@@ -105,10 +108,11 @@ class GoBoard():
             if board.has_no_liberties(group):
                 for i, j in group:
                     board.board[i, j] = "."
-                board.prisoners[board.player_1] += len(group)
+                board.prisoners_player_1 += len(group)
 
         # swap players
         (board.player_1, board.player_2) = (board.player_2, board.player_1)
+        (board.prisoners_player_1, board.prisoners_player_2) = (board.prisoners_player_2, board.prisoners_player_1)
         board.played_turns += 1
 
         return board
@@ -127,10 +131,14 @@ class GoBoard():
 
     # get whether the game is won
     def is_win(self):
-        if self.played_turns <= 30:
+        if self.one_player_capitulated:
+            print("Player capitulated")
+            return True
+
+        if self.played_turns < (2 * self.stones_per_player):
             return False
 
-        return self.prisoners[self.player_1] >= self.prisoners[self.player_2]
+        return self.prisoners_player_1 >= self.prisoners_player_2
 
     # generate legal moves to play in the current position
     def generate_states(self):
@@ -170,4 +178,5 @@ class GoBoard():
         elif self.is_draw():
             print('Game is drawn!\n')
         print("Ended AI turn")
+        print(f"{self.prisoners_player_1=} {self.prisoners_player_2=}")
         return self

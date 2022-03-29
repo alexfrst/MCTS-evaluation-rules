@@ -6,8 +6,8 @@ from copy import deepcopy
 from itertools import product
 
 class Color:
-    BLACK = 'o'
-    WHITE = "x"
+    BLACK = 'x'
+    WHITE = "o"
 
 
 class GoBoard():

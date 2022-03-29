@@ -22,7 +22,7 @@ class GoBoard():
         self.size = size
         self.rule_selection = rule_selection1
         self.rule_selection2 = rule_selection2
-        self.empty_square = 0
+        self.empty_square = '.'
         self.played_turns = 0
         self.prisoners = {
             Color.BLACK: 0,
@@ -149,15 +149,15 @@ class GoBoard():
             return False
         if row < 0 or row >= self.board.shape[0]:
             return False
-        return self.board[row, col] == 0
+        return self.board[row, col] == "."
 
     def game_turn_player(self, pos):
         return self.make_move(*pos)
 
-    def game_turn_IA(self, mcts):
+    def game_turn_IA(self, mcts, rule_selection):
         print("starting AI play")
         try:
-            best_move = mcts.search(self, self.rule_selection)
+            best_move = mcts.search(self, rule_selection)
             print(best_move.board)
             self = best_move.board
         except Exception as e:

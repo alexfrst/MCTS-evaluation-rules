@@ -25,9 +25,9 @@ from game.game_handler import MCTS
 # 1, 0,-1 if agent_to_test wins, draw, lose
 
 
-def play_two_agents(rule_selection1, rule_selection2):
+def play_two_agents(rule_selection1, rule_selection2, size, sequence_length):
     game = TicTacToeBoard(
-        size=3, rule_selection1=rule_selection1, rule_selection2=rule_selection2)
+        size=size, rule_selection1=rule_selection1, rule_selection2=rule_selection2, sequence_length = sequence_length)
     mcts = MCTS()
     turn = 0
     while not game.is_win() and not game.is_draw():
@@ -46,7 +46,7 @@ def play_two_agents(rule_selection1, rule_selection2):
 
 
 # +
-def agent_vs_agent(game_name, size, agent_to_test, agent_to_compare, begin):
+def agent_vs_agent(game_name, size, agent_to_test, agent_to_compare, begin, sequence_length):
     """
     game_name : 'tictactoe' or 'go'
     size : size of the board
@@ -54,19 +54,17 @@ def agent_vs_agent(game_name, size, agent_to_test, agent_to_compare, begin):
     agent_to_compare = 'RANDOM'
     """
     if game_name == 'tictactoe':
-        if begin:
-            rule_selection1 = agent_to_test
-            rule_selection2 = agent_to_compare
-            result = play_two_agents(rule_selection1, rule_selection2)
+            rule_selection1 = agent_to_test if begin else agent_to_compare
+            rule_selection2 = agent_to_compare if begin else agent_to_test
+            result = play_two_agents(rule_selection1, rule_selection2, size, sequence_length)
             return (result)
 
-        # TODO : when not begin
         # TODO : jeu de go
 
 # -
 
 
-def performance_agent(game, size, agent_to_test, agent_to_compare, nb_simulations, begin, plot=False, throttle=1):
+def performance_agent(game, size, agent_to_test, agent_to_compare, nb_simulations, begin, plot=False, throttle=1, sequence_length=3):
     """
     game: TicTacToe / Go
 
@@ -104,7 +102,7 @@ def performance_agent(game, size, agent_to_test, agent_to_compare, nb_simulation
     with tqdm(total=nb_simulations, postfix=postfix) as pbar:
         for simulation in range(nb_simulations):
             result = agent_vs_agent(
-                game, size, agent_to_test, agent_to_compare, begin)
+                game, size, agent_to_test, agent_to_compare, begin, sequence_length)
             # ----
 
             stats[simulation] = result
@@ -152,7 +150,7 @@ def plotstats(stats, win_rate):
     plt.show()
 
 
-def compare_agents(game, size, agents_to_test, agent_to_compare, nb_simulations, begin=True, plot=False):
+def compare_agents(game, size, agents_to_test, agent_to_compare, nb_simulations, begin=True, plot=False, sequence_length=3):
     """
     game: TicTacToe / Go
 
@@ -178,7 +176,7 @@ def compare_agents(game, size, agents_to_test, agent_to_compare, nb_simulations,
 
     for agent_to_test in agents_to_test:
         intervals[agent_to_test] = performance_agent(game, size,
-                                                     agent_to_test, agent_to_compare, nb_simulations, begin, plot)
+                                                     agent_to_test, agent_to_compare, nb_simulations, begin, plot, sequence_length=sequence_length)
         win_rate = (intervals[agent_to_test][0] +
                     intervals[agent_to_test][1])/2
         win_rates[agent_to_test] = int(round(win_rate, 2)*100)
@@ -211,6 +209,8 @@ if __name__ == '__main__':
     agents_to_test = ['IMED', 'UCB']
     agent_to_compare = ['random']
     game_name = 'tictactoe'
-    size = 3
+    size = 5
+    sequence_length = 3
     compare_agents(game_name, size, agents_to_test, agent_to_compare,
-                   nb_simulations=200, begin=True, plot=True)
+                  nb_simulations=200, begin=False, plot=True, sequence_length=sequence_length)
+    #performance_agent(game_name, size, 'IMED', 'UCB', 200, True, plot=True, throttle=1, sequence_length=sequence_length)

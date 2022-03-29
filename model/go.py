@@ -139,12 +139,12 @@ class GoBoard():
 
         for row in range(self.height):
             for col in range(self.width):
-                if self.is_valid_move(col, row):
+                if self.is_valid_move(row, col):
                     positions.append((row, col))
                     actions.append(self.make_move(row, col))
         return actions
 
-    def is_valid_move(self, col, row):
+    def is_valid_move(self, row, col):
         if col < 0 or col >= self.board.shape[1]:
             return False
         if row < 0 or row >= self.board.shape[0]:

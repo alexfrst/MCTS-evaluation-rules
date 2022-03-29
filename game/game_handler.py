@@ -41,14 +41,14 @@ class MCTS():
         print(f"Time elapsed {elapsed_time//60:.0f}min {elapsed_time%60:.0f}s")
 
         try:
-            return self.get_best_move(self.root, rule_selection, exploration_constant=2)
+            return self.get_best_move(self.root, rule_selection, exploration_constant=0)
 
         except Exception as e:
             print(e)
             print(e.with_traceback(None))
 
     # select most promising node
-    def select(self, node, rule_selection, exploration_constant=2):
+    def select(self, node, rule_selection, exploration_constant=0):
         while not node.is_terminal:
             if node.is_fully_expanded:
                 node = self.get_best_move(
@@ -80,8 +80,9 @@ class MCTS():
         while not board.is_win():
             try:
                 board = random.choice(board.generate_states())
-            except Exception as e:
+            except Exception as e :
                 print(e)
+                print(e.with_traceback(None))
                 return 0
 
         if board.player_2 == "x":

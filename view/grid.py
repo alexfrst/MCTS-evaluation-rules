@@ -14,7 +14,7 @@ class GameGrid:
         self.frame_width = int(500/width)
         self.frame_height = int(500/height)
 
-        #Images de fond pour le jeu de Go
+        # Images de fond pour le jeu de Go
         self.background_img = ImageTk.PhotoImage(Image.open("./images/go.png").resize((self.frame_width, self.frame_height)))
         self.player_white = ImageTk.PhotoImage(Image.open("./images/go_white.png").resize((self.frame_width, self.frame_height)))
         self.player_black = ImageTk.PhotoImage(Image.open("./images/go_black.png").resize((self.frame_width, self.frame_height)))
@@ -68,7 +68,6 @@ class GameGrid:
 
 
     def render(self,positions):
-        print(positions)
         if isinstance(positions, dict):
             for pos in positions:
                 if positions[pos] == "x":
@@ -84,13 +83,10 @@ class GameGrid:
                     pos = row,col
                     if positions[pos] == ".":
                         self.update_button_content_go(pos, ".")
-                        self.enable_button(pos)
                     if positions[pos] == "x":
                         self.update_button_content_go(pos, "black")
-                        self.disable_button(pos)
                     if positions[pos] == "o":
                         self.update_button_content_go(pos, "white")
-                        self.disable_button(pos)
 
 
 

@@ -158,12 +158,19 @@ class TicTacToeBoard():
             # loop over board columns
             for col in range(self.width):
                 # make sure that current square is empty
-                if self.position[row, col] == self.empty_square:
+                if self.is_valid_move(row, col):
                     # append available action/board state to action list
                     actions.append(self.make_move(row, col))
 
         # return the list of available actions (board class instances)
         return actions
+
+    def is_valid_move(self, row, col):
+        if row < 0 or row >= self.height:
+            return False
+        if col < 0 or col >= self.width:
+            return False
+        return self.position[row, col] == self.empty_square
 
     # main game loop
     def game_turn_player(self, pos):

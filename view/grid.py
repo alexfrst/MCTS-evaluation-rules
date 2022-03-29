@@ -68,6 +68,7 @@ class GameGrid:
 
 
     def render(self,positions):
+        print(positions)
         if isinstance(positions, dict):
             for pos in positions:
                 if positions[pos] == "x":

@@ -115,12 +115,12 @@ def performance_agent(game, size, agent_to_test, agent_to_compare, nb_simulation
     [p.start() for p in processes]
     [p.join() for p in processes]
 
-    print(queue)
 
     results = []
 
     while not queue.empty():
         results.append(queue.get())
+    print(results)
 
     for simulation, result in enumerate(results):
         stats[simulation] = result
@@ -226,11 +226,11 @@ if __name__ == '__main__':
     agents_to_test = ['IMED', 'UCB']
     agent_to_compare = ['random']
     game_name = 'tictactoe'
-    size = 5
-    nb_simulations = 10
+    size = 9
+    nb_simulations = 6
     compare_agents(game_name, size, agents_to_test, agent_to_compare,
-                   nb_simulations=6, begin=False, plot=True)
+                   nb_simulations=nb_simulations, begin=False, plot=True)
     compare_agents(game_name, size, agents_to_test, agent_to_compare,
-                   nb_simulations=6, begin=True, plot=True)
+                   nb_simulations=nb_simulations, begin=True, plot=True)
     performance_agent(game_name, size, 'IMED', 'UCB', nb_simulations, True, plot=True)
     performance_agent(game_name, size, 'IMED', 'UCB', nb_simulations, False, plot=True)

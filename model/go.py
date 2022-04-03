@@ -162,21 +162,15 @@ class GoBoard():
     def game_turn_player(self, pos):
         return self.make_move(*pos)
 
-    def game_turn_IA(self, mcts, rule_selection):
-        print("starting AI play")
+    def game_turn_IA(self, mcts, rule_selection, verbose=False):
+        if verbose:
+            print("starting AI play")
         try:
             best_move = mcts.search(self, rule_selection)
-            print(best_move.board)
             self = best_move.board
         except Exception as e:
             print(e)
-
-        if self.is_win():
-            print("AI won the game")
-
-        # check if the game is drawn
-        elif self.is_draw():
-            print('Game is drawn!\n')
-        print("Ended AI turn")
-        print(f"{self.prisoners_player_1=} {self.prisoners_player_2=}")
+        if verbose:
+            print("Ended AI turn")
+            print(f"{self.prisoners_player_1=} {self.prisoners_player_2=}")
         return self

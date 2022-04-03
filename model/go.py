@@ -1,5 +1,7 @@
 import itertools
 import random
+import sys
+import traceback
 
 import networkx as nx
 import numpy as np
@@ -167,8 +169,12 @@ class GoBoard():
             print("starting AI play")
         try:
             best_move = mcts.search(self, rule_selection)
+            if best_move is None:
+                print("No move found")
+                return self
             self = best_move.board
         except Exception as e:
+            traceback.print_tb(e.__traceback__, limit=None, file=None)
             print(e)
         if verbose:
             print("Ended AI turn")

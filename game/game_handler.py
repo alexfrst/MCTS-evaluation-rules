@@ -1,6 +1,7 @@
 import random
 from game.rules_selection import IMED_selection, UCB_selection, klBern, random_selection, klGauss
 import time
+import sys
 
 # tree node class definition
 class TreeNode():
@@ -45,7 +46,7 @@ class MCTS():
 
         except Exception as e:
             print(e)
-            print(e.with_traceback(None))
+            print(e.with_traceback(sys.exc_info()[2]))
 
     # select most promising node
     def select(self, node, rule_selection, exploration_constant=0):
@@ -82,7 +83,7 @@ class MCTS():
                 board = random.choice(board.generate_states())
             except Exception as e :
                 print(e)
-                print(e.with_traceback(None))
+                print(e.with_traceback(sys.exc_info()[2]))
                 return 0
 
         if board.player_2 == "x":

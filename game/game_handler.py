@@ -22,7 +22,7 @@ class TreeNode():
 
 class MCTS():
     # search for the best move in the current position
-    def search(self, initial_state, rule_selection):
+    def search(self, initial_state, rule_selection, verbose = False):
 
         start_time = time.perf_counter()
         # create root node
@@ -37,8 +37,8 @@ class MCTS():
         end_time = time.perf_counter()
 
         elapsed_time = end_time - start_time
-
-        print(f"Time elapsed {elapsed_time//60:.0f}min {elapsed_time%60:.0f}s")
+        if verbose:
+            print(f"Time elapsed {elapsed_time//60:.0f}min {elapsed_time%60:.0f}s")
 
         try:
             return self.get_best_move(self.root, rule_selection, exploration_constant=0)

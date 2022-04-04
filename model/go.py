@@ -29,7 +29,7 @@ class GoBoard():
         self.played_turns = 0
         self.prisoners_player_1 = 0
         self.prisoners_player_2 = 0
-        self.stones_per_player = (size-1)**2 + (size/2)
+        self.stones_per_player = (size-2)**2 + (size/2)
         self.one_player_capitulated = False
 
         # define board position

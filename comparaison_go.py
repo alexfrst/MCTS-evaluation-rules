@@ -212,10 +212,10 @@ def compare_agents(game, size, agents_to_test, agent_to_compare, nb_simulations,
 
 if __name__ == '__main__':
     agents_to_test = ['IMED', 'UCB']
-    agent_to_compare = ['random']
+    agent_to_compare = 'random'
     game_name = 'tictactoe'
     size = 7
-    nb_simulations = 220
+    nb_simulations = 222
     compare_agents(game_name, size, agents_to_test, agent_to_compare,
                    nb_simulations=nb_simulations, begin=False, plot=True)
     compare_agents(game_name, size, agents_to_test, agent_to_compare,

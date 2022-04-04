@@ -13,26 +13,14 @@ from game.game_handler import MCTS
 from model.go import GoBoard, Color
 
 
-# import operator
-
-# agent_vs_agent_test : Fonction de test
-
-# agent_vs_agent(game,agent_to_test, agent_to_compare, begin) :
-# En paramètres :
-# agent_to_test: Agent class (Specific rule selction agent)
-# agent_to_compare: Agent class (Dummy Agent)
-# begin : bool. If True, agent_to_test starts, if False agent_to_test doesn't start
-# Returns :
-# 1, 0,-1 if agent_to_test wins, draw, lose
-
-
 def play_two_agents(agent_to_test, other_agent, size, verbose=0):
-    verbose = 1
     game = GoBoard(
         size=size, rule_selection1=agent_to_test, rule_selection2=other_agent)
     mcts = MCTS()
     turns = 0
     while not game.is_win() and not game.is_draw():
+        if verbose:
+            print(turns)
         game = game.game_turn_IA(mcts, game.rule_selection)
         game = game.game_turn_IA(mcts, game.rule_selection2)
         turns += 1
@@ -58,7 +46,7 @@ def play_two_agents(agent_to_test, other_agent, size, verbose=0):
 
 
 # +
-def agent_vs_agent(game_name, size, agent_to_test, agent_to_compare, begin, queue):
+def agent_vs_agent(game_name, size, agent_to_test, agent_to_compare, begin, queue, verbose=0):
     """
     game_name : 'tictactoe' or 'go'
     size : size of the board
@@ -67,7 +55,7 @@ def agent_vs_agent(game_name, size, agent_to_test, agent_to_compare, begin, queu
     """
     rule_selection1 = agent_to_test if begin else agent_to_compare
     rule_selection2 = agent_to_compare if begin else agent_to_test
-    queue.put(play_two_agents(rule_selection1, rule_selection2, size, verbose=0))
+    queue.put(play_two_agents(rule_selection1, rule_selection2, size, verbose=verbose))
 
 
 def performance_agent(game, size, agent_to_test, agent_to_compare, nb_simulations, begin, plot=False, throttle=1,
@@ -110,7 +98,7 @@ def performance_agent(game, size, agent_to_test, agent_to_compare, nb_simulation
     start_time = perf_counter()
     queue = Queue()
 
-    processes = [Process(target=agent_vs_agent, args=(game, size, agent_to_test, agent_to_compare, begin, queue)) for
+    processes = [Process(target=agent_vs_agent, args=(game, size, agent_to_test, agent_to_compare, begin, queue, 1 if _ == 0 else 0)) for
                  _ in range(nb_simulations)]
     [p.start() for p in processes]
     [p.join() for p in processes]
@@ -134,7 +122,6 @@ def performance_agent(game, size, agent_to_test, agent_to_compare, nb_simulation
     win_rate_int = int(round(win_rate, 2) * 100)
     ecart_type = 1 / np.sqrt(nb_simulations)
     interval = [win_rate - ecart_type, win_rate + ecart_type]
-    # interval_95 = [win_rate - 2*ecart_type, win_rate + 2*ecart_type]
 
     if plot:
         name = f'{agent_to_test if begin else agent_to_compare}vs{agent_to_compare if begin else agent_to_test}'
@@ -161,16 +148,17 @@ def plotstats(stats, win_rate, name):
              verticalalignment='center', transform=ax.transAxes, fontsize=14, color='r')
 
     plt.tight_layout()
-    if os.path.exists('figures/'):
-        plt.savefig('figures/stats.png')
-    plt.savefig(name)
+    if not os.path.exists('figures/'):
+        os.makedirs('figures/')
+
+    plt.savefig(f'figures/{name}.png')
 
 
 def compare_agents(game, size, agents_to_test, agent_to_compare, nb_simulations, begin=True, plot=False, ):
     """
     game: TicTacToe / Go
 
-    agents_to_test: list of Agent class ['imed_agent', 'ucb_agent']
+    agents_to_test: list of Agent class ['IMED', 'UCB']
     First AI agent.
 
     agent_to_compare: Agent class (Dummy Agent)
@@ -226,7 +214,7 @@ if __name__ == '__main__':
     agents_to_test = ['IMED', 'UCB']
     agent_to_compare = ['random']
     game_name = 'tictactoe'
-    size = 9
+    size = 3
     nb_simulations = 6
     compare_agents(game_name, size, agents_to_test, agent_to_compare,
                    nb_simulations=nb_simulations, begin=False, plot=True)

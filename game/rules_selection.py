@@ -78,4 +78,6 @@ def IMED_selection(node, kullback):
 
 def random_selection(node):
     moves = [child_node for child_node in node.children.values()]
+    if len(moves) == 0:
+        return None
     return choice(moves)

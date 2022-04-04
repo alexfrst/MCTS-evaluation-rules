@@ -2,38 +2,26 @@
 Compare agents performances
 """
 
+from tkinter import W
 from unicodedata import name
 from pip import main
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
 import numpy as np
-import random
 from model.tictactoe import TicTacToeBoard
 from game.game_handler import MCTS
 
-# import operator
 
-# agent_vs_agent_test : Fonction de test
-
-# agent_vs_agent(game,agent_to_test, agent_to_compare, begin) :
-# En paramètres :
-# agent_to_test: Agent class (Specific rule selction agent)
-# agent_to_compare: Agent class (Dummy Agent)
-# begin : bool. If True, agent_to_test starts, if False agent_to_test doesn't start
-# Returns :
-# 1, 0,-1 if agent_to_test wins, draw, lose
-
-
-def play_two_agents(rule_selection1, rule_selection2):
+def play_two_agents(rule_selection1, rule_selection2, size):
     game = TicTacToeBoard(
-        size=3, rule_selection1=rule_selection1, rule_selection2=rule_selection2)
+        size=size, rule_selection1=rule_selection1, rule_selection2=rule_selection2)
     mcts = MCTS()
     turn = 0
     while not game.is_win() and not game.is_draw():
         turn += 1
         if (turn % 2 == 0):
-            game = game.game_turn_IA(mcts, game.rule_selection)
+            game = game.game_turn_IA(mcts, game.rule_selection1)
         else:
             game = game.game_turn_IA(mcts, game.rule_selection2)
         if game.is_draw():
@@ -57,13 +45,14 @@ def agent_vs_agent(game_name, size, agent_to_test, agent_to_compare, begin):
         if begin:
             rule_selection1 = agent_to_test
             rule_selection2 = agent_to_compare
-            result = play_two_agents(rule_selection1, rule_selection2)
+            result = play_two_agents(rule_selection1, rule_selection2, size)
             return (result)
 
-        # TODO : when not begin
-        # TODO : jeu de go
-
-# -
+        else:
+            rule_selection1 = agent_to_compare
+            rule_selection2 = agent_to_test
+            result = play_two_agents(rule_selection1, rule_selection2, size)
+            return(result)
 
 
 def performance_agent(game, size, agent_to_test, agent_to_compare, nb_simulations, begin, plot=False, throttle=1):
@@ -122,9 +111,6 @@ def performance_agent(game, size, agent_to_test, agent_to_compare, nb_simulation
     win_rate_int = int(round(win_rate, 2)*100)
     ecart_type = 1/np.sqrt(nb_simulations)
     interval = [win_rate - ecart_type, win_rate + ecart_type]
-    # TODO : formule de l'intervale à 95%
-    #interval_95 = [win_rate - 2*ecart_type, win_rate + 2*ecart_type]
-
     if plot:
         plotstats(stats, win_rate_int)
     return(interval)
@@ -145,8 +131,8 @@ def plotstats(stats, win_rate):
     ax.set_xlabel('')
     ax.legend(loc='upper left')
 
-    plt.text(0.5, 0.5, f'win rate {win_rate} %', horizontalalignment='left',
-             verticalalignment='center', transform=ax.transAxes, fontsize=14, color='r')
+    plt.text(0.90, 0.80, f'win rate {win_rate} %', horizontalalignment='right',
+             verticalalignment='top', transform=ax.transAxes, fontsize=14, color='r')
 
     plt.tight_layout()
     plt.show()
@@ -187,7 +173,8 @@ def compare_agents(game, size, agents_to_test, agent_to_compare, nb_simulations,
 
     intervals = sorted(intervals.items(), key=lambda t: t[1])
     if intervals[0][1][1] <= intervals[1][1][0]:  # b1 < a2
-        print(f'Best agent is {intervals[1]}')
+        print(
+            f'Best agent is {intervals[1]} and worst agent is {intervals[0]}')
 
     elif intervals[0][1][1] <= intervals[1][1][1]:  # b1 < b2 intervalles se recoupent
         intersection = abs(intervals[1][1][0] - intervals[0][1][1])
@@ -212,5 +199,8 @@ if __name__ == '__main__':
     agent_to_compare = ['random']
     game_name = 'tictactoe'
     size = 3
-    compare_agents(game_name, size, agents_to_test, agent_to_compare,
-                   nb_simulations=200, begin=True, plot=True)
+    # compare_agents(game_name, size, agents_to_test, agent_to_compare,
+    #                nb_simulations=200, begin=True, plot=True)
+
+    performance_agent(game_name, size, 'random', 'IMED',
+                      200, begin=True, plot=True)

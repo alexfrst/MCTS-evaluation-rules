@@ -22,25 +22,26 @@ class TreeNode():
 
 class MCTS():
     # search for the best move in the current position
-    def search(self, initial_state, rule_selection):
+    def search(self, initial_state, rule_selection, ):
 
         # create root node
         self.root = TreeNode(initial_state, None)
 
         for iteration in range(1000//len(initial_state.render())):
             node = self.select(self.root, rule_selection,
-                               exploration_constant=2)
+                               exploration_constant=15)
             score = self.rollout(node.board)
+            score = (score+1)/2
             self.backpropagate(node, score)
 
         try:
-            return self.get_best_move(self.root, rule_selection, exploration_constant=2)
+            return self.get_best_move(self.root, rule_selection, exploration_constant=15)
 
         except Exception as e:
             print(e)
 
     # select most promising node
-    def select(self, node, rule_selection, exploration_constant=2):
+    def select(self, node, rule_selection, exploration_constant):
         while not node.is_terminal:
             if node.is_fully_expanded:
                 node = self.get_best_move(
@@ -88,7 +89,7 @@ class MCTS():
             node = node.parent
 
     # select the best node
-    def get_best_move(self, node, rule_selection, exploration_constant, kullback=klGauss):
+    def get_best_move(self, node, rule_selection, exploration_constant, kullback=klBern):
         if rule_selection == 'UCB':
             next_move = UCB_selection(node, exploration_constant)
         elif rule_selection == 'IMED':

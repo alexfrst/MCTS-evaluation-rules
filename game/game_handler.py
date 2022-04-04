@@ -1,4 +1,5 @@
 import random
+import traceback
 from game.rules_selection import IMED_selection, UCB_selection, klBern, random_selection, klGauss
 import time
 import sys
@@ -46,9 +47,9 @@ class MCTS():
 
         except Exception as e:
             print(e)
-            print(e.with_traceback(sys.exc_info()[2]))
+            traceback.print_tb(e.__traceback__, limit=None, file=None)
 
-    # select most promising node
+# select most promising node
     def select(self, node, rule_selection, exploration_constant=0):
         while not node.is_terminal:
             if node.is_fully_expanded:
@@ -83,7 +84,7 @@ class MCTS():
                 board = random.choice(board.generate_states())
             except Exception as e :
                 print(e)
-                print(e.with_traceback(sys.exc_info()[2]))
+                traceback.print_tb(e.__traceback__, limit=None, file=None)
                 return 0
 
         if board.player_2 == "x":

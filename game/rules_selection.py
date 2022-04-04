@@ -33,6 +33,8 @@ def UCB_selection(node, exploration_constant):
             best_moves.append(child_node)
 
     # return one of the best moves randomly
+    if len(best_moves) == 0:
+        return None
     return choice(best_moves)
 
 
@@ -68,6 +70,9 @@ def IMED_selection(node, kullback):
         elif move_score == best_score:
             best_moves.append(child_node)
     # return one of the best moves randomly
+    if len(best_moves) == 0:
+        return None
+
     return choice(best_moves)
 
 

@@ -5,6 +5,8 @@ import time
 import sys
 
 # tree node class definition
+
+
 class TreeNode():
     def __init__(self, board, parent):
         self.board = board
@@ -24,7 +26,7 @@ class TreeNode():
 
 class MCTS():
     # search for the best move in the current position
-    def search(self, initial_state, rule_selection, verbose = False):
+    def search(self, initial_state, rule_selection, verbose=False):
 
         start_time = time.perf_counter()
         # create root node
@@ -34,13 +36,15 @@ class MCTS():
             node = self.select(self.root, rule_selection,
                                exploration_constant=15)
             score = self.rollout(node.board)
+            score = (score+1)/2
             self.backpropagate(node, score)
 
         end_time = time.perf_counter()
 
         elapsed_time = end_time - start_time
         if verbose:
-            print(f"Time elapsed {elapsed_time//60:.0f}min {elapsed_time%60:.0f}s")
+            print(
+                f"Time elapsed {elapsed_time//60:.0f}min {elapsed_time%60:.0f}s")
 
         try:
             return self.get_best_move(self.root, rule_selection, exploration_constant=0)
@@ -82,7 +86,7 @@ class MCTS():
         while not board.is_win():
             try:
                 board = random.choice(board.generate_states())
-            except Exception as e :
+            except Exception as e:
                 print(e)
                 traceback.print_tb(e.__traceback__, limit=None, file=None)
                 return 0
@@ -100,7 +104,7 @@ class MCTS():
             node = node.parent
 
     # select the best node
-    def get_best_move(self, node, rule_selection, exploration_constant, kullback=klGauss):
+    def get_best_move(self, node, rule_selection, exploration_constant, kullback=klBern):
         if rule_selection == 'UCB':
             next_move = UCB_selection(node, exploration_constant)
         elif rule_selection == 'IMED':
